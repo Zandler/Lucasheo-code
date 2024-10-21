@@ -1,3 +1,6 @@
+# Adquirir informações da conta AWS para configurar política de bucket
+data "aws_caller_identity" "current" {}
+
 # Bucket S3 para frontend
 resource "aws_s3_bucket" "frontend_bucket" {
   bucket = "frontend-bucket"
@@ -58,7 +61,46 @@ resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
   })
 }
 
-# CloudFront Distribution para o bucket S3
+# Web ACL para o AWS WAF
+resource "aws_wafv2_web_acl" "frontend_waf" {
+  name        = "frontend-waf"
+  description = "ACL para proteger o frontend"
+  scope       = "CLOUDFRONT" # Especifique que isso é para o CloudFront
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesCommonRuleSet"
+    priority = 1
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesCommonRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "waf-metrics"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "web-acl"
+    sampled_requests_enabled   = true
+  }
+}
+
+# CloudFront Distribution para o bucket S3 com WAF
 resource "aws_cloudfront_distribution" "frontend_distribution" {
   origin {
     domain_name = "${aws_s3_bucket.frontend_bucket.bucket}.s3.amazonaws.com"
@@ -102,7 +144,7 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
-}
 
-# Adquirir informações da conta AWS para configurar política de bucket
-data "aws_caller_identity" "current" {}
+  # Associar o WAF WebACL à distribuição CloudFront
+  web_acl_id = aws_wafv2_web_acl.frontend_waf.arn
+}
