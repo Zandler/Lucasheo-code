@@ -836,31 +836,31 @@ module "alb_disabled" {
 # Supporting resources
 ################################################################################
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
+# module "vpc" {
+#   source  = "terraform-aws-modules/vpc/aws"
+#   version = "~> 5.0"
 
-  name = local.name
-  cidr = local.vpc_cidr
+#   name = local.name
+#   cidr = local.vpc_cidr
 
-  azs             = local.azs
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
-  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
+#   azs             = local.azs
+#   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
+#   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
-data "aws_route53_zone" "this" {
-  name = var.domain_name
-}
+# data "aws_route53_zone" "this" {
+#   name = var.domain_name
+# }
 
-module "acm" {
-  source  = "terraform-aws-modules/acm/aws"
-  version = "~> 4.0"
+# module "acm" {
+#   source  = "terraform-aws-modules/acm/aws"
+#   version = "~> 4.0"
 
-  domain_name = var.domain_name
-  zone_id     = data.aws_route53_zone.this.id
-}
+#   domain_name = var.domain_name
+#   zone_id     = data.aws_route53_zone.this.id
+# }
 
 module "wildcard_cert" {
   source  = "terraform-aws-modules/acm/aws"
@@ -889,23 +889,23 @@ resource "aws_instance" "other" {
 
 ###### RDS
 
-data "aws_caller_identity" "current" {}
-data "aws_availability_zones" "available" {}
+# data "aws_caller_identity" "current" {}
+# data "aws_availability_zones" "available" {}
 
-locals {
-  name    = "complete-postgresql"
-  region  = "us-east-1"
-  region2 = "us-east-1"
+# locals {
+#   #name    = "complete-postgresql"
+#   #region  = "us-east-1"
+#   region2 = "us-east-1"
 
-  vpc_cidr = "10.0.0.0/16"
-  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+#   vpc_cidr = "10.0.0.0/16"
+#   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
-  tags = {
-    Name       = local.name
-    Example    = local.name
-    Repository = "https://github.com/terraform-aws-modules/terraform-aws-rds"
-  }
-}
+#   tags = {
+#     Name       = local.name
+#     Example    = local.name
+#     Repository = "https://github.com/terraform-aws-modules/terraform-aws-rds"
+#   }
+# }
 
 ################################################################################
 # RDS Module
@@ -1038,6 +1038,7 @@ module "db_disabled" {
 # RDS Automated Backups Replication Module
 ################################################################################
 
+
 module "kms" {
   source      = "terraform-aws-modules/kms/aws"
   version     = "~> 1.0"
@@ -1071,22 +1072,22 @@ module "db_automated_backups_replication" {
 # Supporting Resources
 ################################################################################
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
+# module "vpc" {
+#   source  = "terraform-aws-modules/vpc/aws"
+#   version = "~> 5.0"
 
-  name = local.name
-  cidr = local.vpc_cidr
+#   name = local.name
+#   cidr = local.vpc_cidr
 
-  azs              = local.azs
-  public_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
-  private_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 3)]
-  database_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 6)]
+#   azs              = local.azs
+#   public_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
+#   private_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 3)]
+#   database_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 6)]
 
-  create_database_subnet_group = true
+#   create_database_subnet_group = true
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
 module "security_group" {
   source  = "terraform-aws-modules/security-group/aws"
