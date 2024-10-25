@@ -86,11 +86,15 @@ resource "aws_lambda_function" "origin_response_lambda" {
 
   tags = var.tags
 
+   vpc_config {
+    subnet_ids         = [aws_subnet.subnet_private.id]
+    security_group_ids = [aws_default_security_group.default_security_group.id]
+
 }
 
 data "archive_file" "viewer_request_lambda" {
   type        = "zip"
-  source_file = "../lambda/viewer_request.py"
+  source_file = "./lambda/src/viewer_request.py"
   output_path = "viewer_request_lambda.zip"
 }
 
@@ -108,4 +112,10 @@ resource "aws_lambda_function" "viewer_request_lambda" {
   publish = true
 
   tags = var.tags
+  
+}
+
+resource "aws_iam_role_policy_attachment" "iam_role_policy_attachment_lambda_basic_execution" {
+  role       = aws_iam_role.iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
