@@ -385,23 +385,23 @@ resource "aws_cloudfront_function" "example" {
 
 ###### RDS
 
-# data "aws_caller_identity" "current" {}
-# data "aws_availability_zones" "available" {}
+data "aws_caller_identity" "current" {}
+data "aws_availability_zones" "available" {}
 
-# locals {
-#   #name    = "complete-postgresql"
-#   #region  = "us-east-1"
-#   region2 = "us-east-1"
+locals {
+  name    = "complete-postgresql"
+  region  = "us-east-1"
+  region2 = "us-east-1"
 
-#   vpc_cidr = "10.0.0.0/16"
-#   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  vpc_cidr = "10.0.0.0/16"
+  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
-#   tags = {
-#     Name       = local.name
-#     Example    = local.name
-#     Repository = "https://github.com/terraform-aws-modules/terraform-aws-rds"
-#   }
-# }
+  tags = {
+    Name       = local.name
+    Example    = local.name
+    Repository = "https://github.com/terraform-aws-modules/terraform-aws-rds"
+  }
+}
 
 ################################################################################
 # RDS Module
@@ -551,9 +551,9 @@ module "kms" {
 
   tags = local.tags
 
-  providers = {
-    aws = aws.region2
-  }
+  # providers = {
+  #   aws = aws.region2
+  # }
 }
 
 # module "db_automated_backups_replication" {
