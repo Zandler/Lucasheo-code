@@ -28,7 +28,7 @@ module "vpc" {
 ###### CloudFront
 
 locals {
-  domain_name = "terraform-aws-modules.modules.tf" # trimsuffix(data.aws_route53_zone.this.name, ".")
+  domain_name = "teste-lab.cloud" # trimsuffix(data.aws_route53_zone.this.name, ".")
   subdomain   = "cdn"
 }
 
@@ -218,16 +218,17 @@ module "cloudfront" {
 ######
 
 data "aws_route53_zone" "this" {
-  name = local.domain_name
+  name = "teste-lab.cloud."
+  private_zone = false
 }
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> 4.0"
 
-  domain_name               = local.domain_name
+  domain_name               = "teste-lab.cloud"
   zone_id                   = data.aws_route53_zone.this.id
-  subject_alternative_names = ["${local.subdomain}.${local.domain_name}"]
+  subject_alternative_names = ["cdn.teste-lab.cloud"]
 }
 
 #############
