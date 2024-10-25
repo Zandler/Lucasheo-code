@@ -228,7 +228,7 @@ module "acm" {
 
   domain_name               = "teste-lab.cloud"
   zone_id                   = data.aws_route53_zone.this.id
-  subject_alternative_names = ["cdn.teste-lab.cloud"]
+  subject_alternative_names = ["teste-lab.cloud"]
 }
 
 #############
