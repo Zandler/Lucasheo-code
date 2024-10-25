@@ -84,12 +84,12 @@ resource "aws_lambda_function" "origin_response_lambda" {
 
   publish = true
 
-  tags = var.tags
-
-   vpc_config {
+  vpc_config {
     subnet_ids         = [aws_subnet.subnet_private.id]
     security_group_ids = [aws_default_security_group.default_security_group.id]
+   }
 
+  tags = var.tags
 }
 
 data "archive_file" "viewer_request_lambda" {
@@ -110,6 +110,10 @@ resource "aws_lambda_function" "viewer_request_lambda" {
   runtime = "python3.7"
 
   publish = true
+  vpc_config {
+    subnet_ids         = [aws_subnet.subnet_private.id]
+    security_group_ids = [aws_default_security_group.default_security_group.id]
+   }
 
   tags = var.tags
   
